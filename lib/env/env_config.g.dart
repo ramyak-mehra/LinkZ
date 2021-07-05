@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'jwt_config.dart';
+part of 'env_config.dart';
 
 // **************************************************************************
 // EnvifyGenerator
 // **************************************************************************
 
-class _JWTConfig {
+class _EnvConfig {
   static const jwtSecret = 'secret';
   static const jwtExpiryMinutes = '15';
   static const jwtIss = 'ramyak';

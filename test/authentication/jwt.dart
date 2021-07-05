@@ -17,11 +17,11 @@ void main() {
       final userData = <String, String>{};
       final generatedClaims = JsonWebTokenClaims.fromJson({
         'exp': DateTime.now()
-                .add(Duration(minutes: JWTConfig.jwtExpiryMinutes.toInt()))
+                .add(Duration(minutes: EnvConfig.jwtExpiryMinutes.toInt()))
                 .millisecondsSinceEpoch ~/
             1000,
-        'iss': JWTConfig.jwtIss,
-        'aud': JWTConfig.jwtAud,
+        'iss': EnvConfig.jwtIss,
+        'aud': EnvConfig.jwtAud,
         'sub': userData,
         'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000
       });

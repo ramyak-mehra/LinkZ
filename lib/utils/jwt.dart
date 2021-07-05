@@ -6,7 +6,7 @@ import 'package:linkz/env/env.dart';
 @sealed
 abstract class JWTUtil {
   static JsonWebKey jsonWebKey =
-      JsonWebKey.fromJson({'kty': 'oct', 'k': JWTConfig.jwtSecret});
+      JsonWebKey.fromJson({'kty': 'oct', 'k': EnvConfig.jwtSecret});
 
   static String generateJWTToken(
       {required JsonWebKey jsonWebKey, required Map<String, String> userData}) {
@@ -26,7 +26,7 @@ abstract class JWTUtil {
     final jwt = await JsonWebToken.decodeAndVerify(jwtToken, keyStore);
 
     var violations = jwt.claims.validate(
-        issuer: Uri.parse(JWTConfig.jwtIss), clientId: JWTConfig.jwtAud);
+        issuer: Uri.parse(EnvConfig.jwtIss), clientId: EnvConfig.jwtAud);
 
     if (jwt.isVerified == true && violations.isEmpty) {
       return jwt.claims;
@@ -44,11 +44,11 @@ abstract class JWTUtil {
     //Generate JWt Claims.
     final claims = JsonWebTokenClaims.fromJson({
       'exp': DateTime.now()
-              .add(Duration(minutes: JWTConfig.jwtExpiryMinutes.toInt()))
+              .add(Duration(minutes: EnvConfig.jwtExpiryMinutes.toInt()))
               .millisecondsSinceEpoch ~/
           1000,
-      'iss': JWTConfig.jwtIss,
-      'aud': JWTConfig.jwtAud,
+      'iss': EnvConfig.jwtIss,
+      'aud': EnvConfig.jwtAud,
       'sub': userData,
       'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000
     });

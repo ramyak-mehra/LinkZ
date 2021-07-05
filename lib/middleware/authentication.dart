@@ -28,9 +28,9 @@ String _extractJWTToken(HttpRequest request) {
   if (authorization == null) {
     throw AlfredException(401, {'error': 'You are not authenticated.'});
   }
-  if (!authorization.startsWith('${JWTConfig.tokenType} ')) {
+  if (!authorization.startsWith('${EnvConfig.tokenType} ')) {
     throw AlfredException(401, {'error': 'Invalid Token type'});
   }
 
-  return authorization.replaceAll('${JWTConfig.tokenType} ', '');
+  return authorization.replaceAll('${EnvConfig.tokenType} ', '');
 }
