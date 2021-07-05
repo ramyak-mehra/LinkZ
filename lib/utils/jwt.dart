@@ -1,5 +1,6 @@
 import 'package:alfred/alfred.dart';
 import 'package:jose/jose.dart';
+import 'package:linkz/models/models.dart';
 import 'package:meta/meta.dart';
 import 'package:linkz/env/env.dart';
 
@@ -9,8 +10,11 @@ abstract class JWTUtil {
       JsonWebKey.fromJson({'kty': 'oct', 'k': EnvConfig.jwtSecret});
 
   static String generateJWTToken(
-      {required JsonWebKey jsonWebKey, required Map<String, String> userData}) {
-    final claims = _generateClaims(userData);
+      {required JsonWebKey jsonWebKey,
+      required UserTokenSubject userData,
+      Duration? jwtExpiery}) {
+    final claims = _generateClaims(userData,
+        jwtExpiery ?? Duration(minutes: EnvConfig.jwtExpiryMinutes.toInt()));
     final jsonWebSignatureBuilder = JsonWebSignatureBuilder()
       ..jsonContent = claims.toJson()
       ..addRecipient(jsonWebKey, algorithm: 'HS256')
@@ -30,26 +34,27 @@ abstract class JWTUtil {
 
     if (jwt.isVerified == true && violations.isEmpty) {
       return jwt.claims;
-    } else if (jwt.isVerified ?? false) {
-      throw AlfredException(401, {'message': 'JWT token verification failed.'});
+    } else if (violations.isNotEmpty) {
+      // ignore: avoid_function_literals_in_foreach_calls
+      violations.forEach((exception) {
+        throw AlfredException(
+            401, {'error': (exception as JoseException).message});
+      });
+    } else {
+      throw AlfredException(401, {'error': 'JWT token verification failed.'});
     }
-    violations.map((exception) {
-      throw AlfredException(
-          401, {'message': (exception as JoseException).message});
-    });
+
     return null;
   }
 
-  static JsonWebTokenClaims _generateClaims(Map<String, String> userData) {
+  static JsonWebTokenClaims _generateClaims(
+      UserTokenSubject userData, Duration jwtExpirey) {
     //Generate JWt Claims.
     final claims = JsonWebTokenClaims.fromJson({
-      'exp': DateTime.now()
-              .add(Duration(minutes: EnvConfig.jwtExpiryMinutes.toInt()))
-              .millisecondsSinceEpoch ~/
-          1000,
+      'exp': DateTime.now().add(jwtExpirey).millisecondsSinceEpoch ~/ 1000,
       'iss': EnvConfig.jwtIss,
       'aud': EnvConfig.jwtAud,
-      'sub': userData,
+      'sub': userData.toJson(),
       'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000
     });
 

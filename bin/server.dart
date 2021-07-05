@@ -1,8 +1,6 @@
 import 'dart:io';
-
+import 'package:alfred/alfred.dart';
 import 'package:args/args.dart';
-import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf/shelf_io.dart' as io;
 
 // For Google Cloud Run, set _hostname to '0.0.0.0'.
 const _hostname = 'localhost';
@@ -21,14 +19,5 @@ void main(List<String> args) async {
     exitCode = 64;
     return;
   }
-
-  var handler = const shelf.Pipeline()
-      .addMiddleware(shelf.logRequests())
-      .addHandler(_echoRequest);
-
-  var server = await io.serve(handler, _hostname, port);
-  //print('Serving at http://${server.address.host}:${server.port}');
+  var app = Alfred(logLevel: LogType.debug);
 }
-
-shelf.Response _echoRequest(shelf.Request request) =>
-    shelf.Response.ok('Request for "${request.url}"');

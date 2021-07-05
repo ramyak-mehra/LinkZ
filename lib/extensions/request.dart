@@ -6,7 +6,7 @@ extension UserStore on HttpRequest {
     return store.get('user');
   }
 
-  void setUser(User user) {
+  void setUser(UserTokenSubject user) {
     store.set('user', user);
   }
 }

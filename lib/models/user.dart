@@ -85,3 +85,46 @@ class User extends BaseModel {
         account.hashCode;
   }
 }
+
+class UserTokenSubject {
+  UserTokenSubject({
+    required this.userId,
+    required this.username,
+  });
+
+  factory UserTokenSubject.fromJson(String source) =>
+      UserTokenSubject.fromMap(json.decode(source));
+
+  factory UserTokenSubject.fromMap(Map<String, dynamic> map) {
+    return UserTokenSubject(
+      userId: map['userId'],
+      username: map['username'],
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'username': username,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  String userId;
+  String username;
+
+  @override
+  String toString() => 'UserTokenSubject(userId: $userId, username: $username)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserTokenSubject &&
+        other.userId == userId &&
+        other.username == username;
+  }
+
+  @override
+  int get hashCode => userId.hashCode ^ username.hashCode;
+}

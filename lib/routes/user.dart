@@ -9,9 +9,9 @@ class UserRoute {
   NestedRoute get router {
     var userRouter =
         NestedRoute(alfred: app, basePath: '/user/', baseMiddleware: [])
-          ..get('', details, middleware: [authenticatedOnly])
+          ..get('', details, middleware: [authenticatedMiddleware])
           ..post('login', login)
-          ..post('logout', logout, middleware: [authenticatedOnly])
+          ..post('logout', logout, middleware: [authenticatedMiddleware])
           ..post('register', register)
           ..all('*', (req, res) => '');
 
