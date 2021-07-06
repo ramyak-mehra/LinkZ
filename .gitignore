@@ -7,4 +7,4 @@ build/
 
 # Environment variables
 .env
-.env_config.g.dart
+lib/env/*.g.dart

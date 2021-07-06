@@ -7,7 +7,11 @@ part 'dummy.g.dart';
 class DummyModel extends BaseModel {
   DummyModel(String id, DateTime createdAt, DateTime updatedAt)
       : super(id, createdAt, updatedAt);
-  @db.ForiegnKey(
-      columnName: 'testField', postgresType: 'Boolean', referencedTable: 'cool')
-  final bool testField = true;
+
+  @db.PrimaryKey()
+  late final String username;
+  @db.DBColumn()
+  late final String email;
+  @db.DBColumn()
+  late final bool isSuperuser;
 }

@@ -8,11 +8,23 @@ part of 'dummy.dart';
 
 /*
 classname : DummyModel;
-class Annotation Type : Table
-field tableName value : dummy_table
-bool testField;
-String  coulmnName = testField;
-String  postgresType = Boolean;
-String  referencedTable = cool;
-String?  referencedColumn = null;
+TableData(table: AnnotatedClass(type: Table,
+ fields: {Field(type: String, name: tableName, 
+ annotatedClassInfo: null): dummy_table})
+, className: DummyModel, fields: [Field(type: String, name: username, 
+ annotatedClassInfo: AnnotatedClass(type: PrimaryKey,
+ fields: {Field(type: String, name: coulmnName, 
+ annotatedClassInfo: null): null, Field(type: String, name: postgresType, 
+ annotatedClassInfo: null): null})
+), Field(type: String, name: email, 
+ annotatedClassInfo: AnnotatedClass(type: DBColumn,
+ fields: {Field(type: String, name: coulmnName, 
+ annotatedClassInfo: null): null, Field(type: String, name: postgresType, 
+ annotatedClassInfo: null): null})
+), Field(type: bool, name: isSuperuser, 
+ annotatedClassInfo: AnnotatedClass(type: DBColumn,
+ fields: {Field(type: String, name: coulmnName, 
+ annotatedClassInfo: null): null, Field(type: String, name: postgresType, 
+ annotatedClassInfo: null): null})
+)])
 */
