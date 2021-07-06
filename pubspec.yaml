@@ -8,6 +8,8 @@ environment:
 dependencies:
   db_annotations:
     path: ./packages/db_annotations/
+  authentication:
+    path: ./packages/authentication/
   alfred: ^0.1.4+5
   args: ^2.0.0
   envify: ^2.0.0

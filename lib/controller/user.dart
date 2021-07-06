@@ -1,6 +1,6 @@
 import 'package:alfred/alfred.dart';
+import 'package:authentication/authentication.dart';
 import 'package:logger/logger.dart';
-import 'package:linkz/extensions/extensions.dart';
 
 var _logger = Logger(
   printer: PrettyPrinter(

@@ -1,36 +1,34 @@
-import 'package:alfred/alfred.dart';
-import 'package:jose/jose.dart';
-import 'package:linkz/models/models.dart';
-import 'package:meta/meta.dart';
-import 'package:linkz/env/env.dart';
+import 'package:authentication/authentication.dart';
 
 @sealed
-abstract class JWTUtil {
-  static JsonWebKey jsonWebKey =
-      JsonWebKey.fromJson({'kty': 'oct', 'k': EnvConfig.jwtSecret});
+class JWTUtil {
+  final JWTConfig jwtConfig;
+  final String? tokenType;
+  late final JsonWebKey _jsonWebKey;
 
-  static String generateJWTToken(
-      {required JsonWebKey jsonWebKey,
-      required UserTokenSubject userData,
-      Duration? jwtExpiery}) {
+  JWTUtil(this.jwtConfig, {this.tokenType})
+      : _jsonWebKey =
+            JsonWebKey.fromJson({'kty': 'oct', 'k': jwtConfig.jwtSecret});
+
+  String generateJWTToken(
+      {required UserTokenSubject userData, Duration? jwtExpiery}) {
     final claims = _generateClaims(userData,
-        jwtExpiery ?? Duration(minutes: EnvConfig.jwtExpiryMinutes.toInt()));
+        jwtExpiery ?? Duration(minutes: jwtConfig.jwtExpiryMinutes.toInt()));
     final jsonWebSignatureBuilder = JsonWebSignatureBuilder()
       ..jsonContent = claims.toJson()
-      ..addRecipient(jsonWebKey, algorithm: 'HS256')
+      ..addRecipient(_jsonWebKey, algorithm: 'HS256')
       ..build();
     final jws = jsonWebSignatureBuilder.build();
     return jws.toCompactSerialization();
   }
 
-  static Future<JsonWebTokenClaims?> verifyJWTToken(
-      String jwtToken, JsonWebKey jsonWebKey) async {
-    final keyStore = JsonWebKeyStore()..addKey(jsonWebKey);
+  Future<JsonWebTokenClaims?> verifyJWTToken(String jwtToken) async {
+    final keyStore = JsonWebKeyStore()..addKey(_jsonWebKey);
 
     final jwt = await JsonWebToken.decodeAndVerify(jwtToken, keyStore);
 
     var violations = jwt.claims.validate(
-        issuer: Uri.parse(EnvConfig.jwtIss), clientId: EnvConfig.jwtAud);
+        issuer: Uri.parse(jwtConfig.jwtIss), clientId: jwtConfig.jwtAud);
 
     if (jwt.isVerified == true && violations.isEmpty) {
       return jwt.claims;
@@ -47,21 +45,17 @@ abstract class JWTUtil {
     return null;
   }
 
-  static JsonWebTokenClaims _generateClaims(
+  JsonWebTokenClaims _generateClaims(
       UserTokenSubject userData, Duration jwtExpirey) {
     //Generate JWt Claims.
     final claims = JsonWebTokenClaims.fromJson({
       'exp': DateTime.now().add(jwtExpirey).millisecondsSinceEpoch ~/ 1000,
-      'iss': EnvConfig.jwtIss,
-      'aud': EnvConfig.jwtAud,
+      'iss': jwtConfig.jwtIss,
+      'aud': jwtConfig.jwtAud,
       'sub': userData.toJson(),
       'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000
     });
 
     return claims;
   }
-}
-
-extension ToInt on String {
-  int toInt() => int.parse(this);
 }

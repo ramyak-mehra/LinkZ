@@ -1,7 +1,4 @@
-import 'package:jose/jose.dart';
-import 'package:linkz/env/env.dart';
-import 'package:linkz/models/models.dart';
-import 'package:linkz/utils/jwt.dart';
+import 'package:authentication/authentication.dart';
 import 'package:test/test.dart';
 
 void main() {
