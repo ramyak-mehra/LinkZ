@@ -12,5 +12,6 @@ export 'package:logging/logging.dart';
 export 'package:source_gen/source_gen.dart';
 
 export 'src/builder.dart';
-export 'src/models.dart';
 export 'src/db_query_generator_base.dart';
+export 'src/models.dart';
+export 'src/query_templates.dart';
