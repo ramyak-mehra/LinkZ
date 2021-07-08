@@ -5,7 +5,7 @@ class Table {
 }
 
 abstract class Column {
-  final String coulmnName;
+  final String? coulmnName;
   final String? postgresType;
   const Column(this.coulmnName, this.postgresType);
 }
@@ -27,6 +27,6 @@ class ForiegnKey extends Column {
 }
 
 class DBColumn extends Column {
-  const DBColumn({required String columnName, String? postgresType})
+  const DBColumn({String? columnName, String? postgresType})
       : super(columnName, postgresType);
 }

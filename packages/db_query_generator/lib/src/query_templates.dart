@@ -8,19 +8,18 @@ class QueryTemplate {
   }
 
   String allQuery() {
-    return 'SELECT * from $tableName;';
+    return 'SELECT * FROM $tableName;';
   }
 
-  String whereQuery(String columnName, dynamic value) {
-    return "SELECT * from $tableName WHERE $columnName = '$value' ;";
+  String whereQuery(String columnName) {
+    return "SELECT * FROM $tableName WHERE $columnName = @$columnName;";
   }
 
-  String updateQuery(
-      String columnName, dynamic value, String pk, dynamic pkValue) {
-    return "UPDATE $tableName SET $columnName = '$value' WHERE $pk = '$pkValue';";
+  String updateQuery(String columnName, String pk) {
+    return "UPDATE $tableName SET $columnName = @$columnName WHERE $pk = @$pk;";
   }
 
-  String deleteQuery(String pk, dynamic pkValue) {
-    return "DELETE FROM $tableName  WHERE $pk = '$pkValue';";
+  String deleteQuery(String pk) {
+    return "DELETE FROM $tableName  WHERE $pk = @$pk;";
   }
 }

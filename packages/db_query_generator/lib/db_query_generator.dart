@@ -15,3 +15,4 @@ export 'src/builder.dart';
 export 'src/db_query_generator_base.dart';
 export 'src/models.dart';
 export 'src/query_templates.dart';
+export 'src/query_generator.dart';

@@ -10,7 +10,7 @@ class DBQueryGenerator extends GeneratorForAnnotation<Table> {
     var visitor = ChildrenVisitor();
 
     element.visitChildren(visitor);
-    buffer.writeln('classname : ${element.displayName};');
+    //buffer.writeln('classname : ${element.displayName};');
     if (annotation.instanceOf(TypeChecker.fromRuntime(Table))) {
       visitor.tableData.table = AnnotatedClass<Type>()
         ..type = Table
@@ -19,8 +19,14 @@ class DBQueryGenerator extends GeneratorForAnnotation<Table> {
               annotation.peek('tableName')!.stringValue
         };
     }
-    buffer.writeln(visitor.tableData);
-    return "/*\n" + buffer.toString() + "*/";
+    //buffer.writeln(visitor.tableData);
+
+    //_log.warning(visitor.tableData.table!.fields.entries.first);
+    //_log.warning(visitor.tableData.table!.fields[firstKey]);
+    ModelQueryGenerator userModel = ModelQueryGenerator(visitor.tableData);
+    userModel.generateData(buffer);
+
+    return buffer.toString();
   }
 }
 
@@ -92,7 +98,6 @@ class ChildrenVisitor extends SimpleElementVisitor {
         }
       }
     }
-    _log.info(field.annotatedClassInfo);
     //Adding the field to the table object.
     tableData.fields.add(field);
     return super.visitFieldElement(element);

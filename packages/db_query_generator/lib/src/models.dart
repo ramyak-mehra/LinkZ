@@ -37,10 +37,10 @@ class TableData {
 }
 
 ///This contains the type of annotation class i.e name
-///and Annotated fields. Annotated fields is a map of field
+///and Annotated fields. AnnotatedField is a map of field
 ///and its value.
 class AnnotatedClass<T> {
-  late T type;
+  T? type;
   late AnnotatedField fields;
 
   @override
@@ -76,10 +76,7 @@ class Field<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Field<T> &&
-        other.type == type &&
-        other.name == name &&
-        other.annotatedClassInfo == annotatedClassInfo;
+    return other is Field<T> && other.type == type && other.name == name;
   }
 }
 

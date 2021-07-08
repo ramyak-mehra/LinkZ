@@ -6,15 +6,16 @@ environment:
   sdk: ">=2.13.0 <3.0.0"
 
 dependencies:
-  db_annotations:
-    path: ./packages/db_annotations/
   authentication:
     path: ./packages/authentication/
+  db_annotations:
+    path: ./packages/db_annotations/
   alfred: ^0.1.4+5
   args: ^2.0.0
   envify: ^2.0.0
   jose: ^0.3.2
   logger: ^1.0.0
+  postgres: ^2.3.2
   shelf: ^1.1.0
 
 dev_dependencies:
