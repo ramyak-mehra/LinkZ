@@ -18,15 +18,17 @@ class User {
   User({
     required this.username,
     this.email,
+    required this.id,
     required this.hashedPassword,
     required this.salt,
-    required this.account,
+    this.account,
   });
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       username: map['username'],
       email: map['email'],
+      id: map['id'],
       hashedPassword: map['hashedPassword'],
       salt: map['salt'],
       account: map['account'],
@@ -37,9 +39,10 @@ class User {
 
   final String username;
   final String? email;
+  final String id;
   final String hashedPassword;
   final String salt;
-  final String account;
+  final String? account;
 
   Map<String, dynamic> toMap() {
     return {
@@ -48,6 +51,7 @@ class User {
       'hashedPassword': hashedPassword,
       'salt': salt,
       'account': account,
+      'id': id
     };
   }
 
@@ -56,7 +60,7 @@ class User {
   @override
   String toString() {
     // ignore: lines_longer_than_80_chars
-    return 'User(username: $username, email: $email, hashedPassword: $hashedPassword, salt: $salt, account: $account)';
+    return 'User(username: $username, email: $email, hashedPassword: $hashedPassword, salt: $salt, account: $account , id: $id)';
   }
 
   @override
@@ -68,6 +72,7 @@ class User {
         other.email == email &&
         other.hashedPassword == hashedPassword &&
         other.salt == salt &&
+        other.id == id &&
         other.account == account;
   }
 
@@ -77,6 +82,7 @@ class User {
         email.hashCode ^
         hashedPassword.hashCode ^
         salt.hashCode ^
+        id.hashCode ^
         account.hashCode;
   }
 }
