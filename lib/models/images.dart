@@ -1,6 +1,6 @@
 import 'models.dart';
 
-class ImageField extends BaseModel {
+class ImageField {
   ImageField(
       {required String path,
       double? height,
@@ -10,8 +10,7 @@ class ImageField extends BaseModel {
       required DateTime updatedAt})
       : _path = path,
         _height = height,
-        _width = width,
-        super(id, createdAt, updatedAt);
+        _width = width;
 
   final String _path;
   final double? _height;

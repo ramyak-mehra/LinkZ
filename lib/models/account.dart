@@ -4,14 +4,10 @@ import 'package:linkz/models/socials.dart';
 
 import 'models.dart';
 
-class Account extends BaseModel {
+class Account {
   Account({
     required Design currentDesign,
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  })  : _currentDesign = currentDesign,
-        super(id, createdAt, updatedAt);
+  }) : _currentDesign = currentDesign;
 
 //TODO: Create factory constructors for adding socials.
 

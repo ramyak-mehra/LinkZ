@@ -1,57 +1,29 @@
 import 'models.dart';
 
-abstract class Design extends BaseModel {
-  Design(
-    String id,
-    DateTime createdAt,
-    DateTime updatedAt,
-  ) : super(id, createdAt, updatedAt);
-}
+abstract class Design {}
 
 enum Orientation { horizontal, vertical }
 
 class GradientDesign extends Design {
-  GradientDesign(
-    this.colors,
-    this.orientation, {
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(id, createdAt, updatedAt);
+  GradientDesign(this.colors, this.orientation);
 
   final List<String> colors;
   final Orientation orientation;
 }
 
 class AnimatedDesign extends Design {
-  AnimatedDesign(
-    this.path, {
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(id, createdAt, updatedAt);
+  AnimatedDesign(this.path);
   final String path;
 }
 
 class EmojiDesign extends Design {
-  EmojiDesign(
-    this.emoji,
-    this.bgColor, {
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(id, createdAt, updatedAt);
+  EmojiDesign(this.emoji, this.bgColor);
 
   final String emoji;
   final String bgColor;
 }
 
 class ImageBackground extends Design {
-  ImageBackground(
-    this.image, {
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(id, createdAt, updatedAt);
+  ImageBackground(this.image);
   final ImageField image;
 }

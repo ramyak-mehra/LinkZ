@@ -1,23 +1,19 @@
 import 'models.dart';
 
-class Link extends BaseModel {
+class Link {
   Link({
     required Account account,
     required String title,
     required String url,
     required int index,
     String? emoji,
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
   })  : _account = account,
         _title = title,
         _url = url,
         _index = index,
         _emoji = emoji,
         _clicks = 0,
-        _turnedOn = false,
-        super(id, createdAt, updatedAt);
+        _turnedOn = false;
   final Account _account;
   final String _title;
   final String _url;

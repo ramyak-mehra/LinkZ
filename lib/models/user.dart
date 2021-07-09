@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'models.dart';
 
-class User extends BaseModel {
+class User {
   // factory User.fromUsername(String username, String password, String salt) {
   //   //TODO: When added to the database get base model's field
   //   const id = '';
@@ -15,27 +15,22 @@ class User extends BaseModel {
   //       createdAt: DateTime.now(),
   //       updatedAt: DateTime.now());
   // }
-  User(
-      {required this.username,
-      this.email,
-      required this.hashedPassword,
-      required this.salt,
-      required this.account,
-      required String id,
-      required DateTime createdAt,
-      required DateTime updatedAt})
-      : super(id, createdAt, updatedAt);
+  User({
+    required this.username,
+    this.email,
+    required this.hashedPassword,
+    required this.salt,
+    required this.account,
+  });
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-        username: map['username'],
-        email: map['email'],
-        hashedPassword: map['hashedPassword'],
-        salt: map['salt'],
-        account: map['account'],
-        createdAt: map['createdAt'],
-        id: map['id'],
-        updatedAt: map['updatedAt']);
+      username: map['username'],
+      email: map['email'],
+      hashedPassword: map['hashedPassword'],
+      salt: map['salt'],
+      account: map['account'],
+    );
   }
 
   factory User.fromJson(String source) => User.fromMap(json.decode(source));

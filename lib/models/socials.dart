@@ -1,17 +1,13 @@
 import 'package:linkz/models/base_model.dart';
 
-class Socials extends BaseModel {
+class Socials {
   Socials({
     String? facebook,
     String? instagram,
     String? twitter,
-    required String id,
-    required DateTime createdAt,
-    required DateTime updatedAt,
   })  : _facebook = facebook,
         _instagram = instagram,
-        _twitter = twitter,
-        super(id, createdAt, updatedAt);
+        _twitter = twitter;
 
   final String? _facebook;
   final String? _instagram;
