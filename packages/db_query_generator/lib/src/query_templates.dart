@@ -3,8 +3,8 @@ class QueryTemplate {
 
   QueryTemplate(this.tableName);
 
-  String insertQuery(String columns, dynamic values) {
-    return "INSERT INTO $tableName($columns) VALUES($values)";
+  String insertQuery(String columns, String value) {
+    return "INSERT INTO $tableName($columns) VALUES($value)";
   }
 
   String allQuery() {
@@ -20,6 +20,6 @@ class QueryTemplate {
   }
 
   String deleteQuery(String pk) {
-    return "DELETE FROM $tableName  WHERE $pk = @$pk;";
+    return "DELETE FROM $tableName WHERE $pk = @$pk;";
   }
 }

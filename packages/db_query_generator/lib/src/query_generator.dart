@@ -27,6 +27,7 @@ class ModelQueryGenerator {
     final pkField = _getPkField();
     final pkColumn = _extractColumnName(pkField);
     buffer.writeln('class \$$className{');
+    _insertObject(buffer, className: className, fields: _usableFields);
     _getObjectByPk(buffer,
         className: className,
         tableName: tableName,
@@ -34,16 +35,30 @@ class ModelQueryGenerator {
         pkColumn: pkColumn);
     _getAllObjects(buffer, className: className, tableName: tableName);
     for (var field in _usableFields) {
-      var columName = _extractColumnName(field);
-      if (columName == pkColumn) {
+      var columnName = _extractColumnName(field);
+      if (columnName == pkColumn) {
         continue;
       }
       _getObjectByColumn(buffer,
           className: className,
           tableName: tableName,
           field: field,
-          columnName: columName);
+          columnName: columnName);
     }
+
+    for (var field in _usableFields) {
+      var columnName = _extractColumnName(field);
+
+      _updateObjectByColumn(buffer,
+          className: className,
+          field: field,
+          columnName: columnName,
+          pkColumn: pkColumn,
+          pkField: pkField);
+    }
+
+    _deleteObjectByPk(buffer,
+        className: className, pkField: pkField, pkColumn: pkColumn);
     buffer.writeln('}');
   }
 
@@ -62,6 +77,32 @@ class ModelQueryGenerator {
 
     buffer.writeln('}');
     buffer.writeln('return ${lowerClassName}s;');
+    buffer.writeln('}');
+  }
+
+  void _insertObject(
+    StringBuffer buffer, {
+    required String className,
+    required List<Field> fields,
+  }) {
+    var inputValues = '';
+    var columnNames = '';
+    var input = '';
+    var substitutionValues = '';
+    for (var field in _usableFields) {
+      var columnName = _extractColumnName(field);
+      input = input + ' required ${field.type} $columnName,';
+      inputValues = inputValues + ' @' + columnName;
+      columnNames = columnNames + columnName + ' , ';
+      substitutionValues = substitutionValues + "'$columnName' : $columnName ,";
+    }
+    buffer.writeln(
+        'static Future<int> insert${className}(PostgreSQLExecutionContext execContext , {$input}) async {');
+    buffer.writeln(
+        "final result = await execContext.execute(\'${_insertInto(columnNames, inputValues)}\' , substitutionValues : {$substitutionValues});");
+    buffer.writeln('assert(result == 1);');
+
+    buffer.writeln('return result;');
     buffer.writeln('}');
   }
 
@@ -101,29 +142,69 @@ class ModelQueryGenerator {
     buffer.writeln('}');
   }
 
-  String _insertInto(List<Field> fields, List<String> values) {
-    final allColumnNames = [];
-    for (var field in fields) {
-      allColumnNames.add(_extractColumnName(field));
+  void _updateObjectByColumn(StringBuffer buffer,
+      {required String className,
+      required Field field,
+      required Field pkField,
+      required String pkColumn,
+      required String columnName}) {
+    var input = '';
+    var substitutionValues = '';
+    if (pkColumn == columnName) {
+      input = 'required ${pkField.type} $pkColumn';
+      substitutionValues =
+          "'$columnName' : $columnName , '$pkColumn' : $pkColumn";
+    } else {
+      input =
+          'required ${field.type} $columnName ,required ${pkField.type} $pkColumn';
+      substitutionValues = "'$pkColumn' : $pkColumn";
     }
-    return _template.insertQuery(allColumnNames.join(', '), values.join(', '));
+
+    buffer.writeln(
+        'static Future<int> update${className}${columnName.firstCapital}(PostgreSQLExecutionContext execContext , {$input}) async {');
+    buffer.writeln(
+        "final result = await execContext.execute(\'${_update(columnName, pkColumn)}\' , substitutionValues : {$substitutionValues});");
+
+    buffer.writeln('assert(result == 1);');
+    buffer.writeln('return result;');
+
+    buffer.writeln('}');
+  }
+
+  void _deleteObjectByPk(StringBuffer buffer,
+      {required String className,
+      required Field pkField,
+      required String pkColumn}) {
+    buffer.writeln(
+        'static Future<int> delete${className}ByPk(PostgreSQLExecutionContext execContext , {required ${pkField.type} $pkColumn}) async {');
+    buffer.writeln(
+        "final result = await execContext.execute(\'${_deleteObject(pkColumn)}\' , substitutionValues : {'$pkColumn' : $pkColumn});");
+    buffer.writeln('assert(result == 1);');
+    buffer.writeln('return result;');
+    buffer.writeln('}');
+  }
+
+  String _insertInto(String columns, String values) {
+    return _template.insertQuery(columns, values);
   }
 
   String _getAll() {
     return _template.allQuery();
   }
 
-  String _getAnyField(String columName) {
-    return _template.whereQuery(columName);
+  String _getAnyField(String columnName) {
+    return _template.whereQuery(columnName);
   }
 
-  String _update(Field field, String value, String pkValue) {
-    return _template.updateQuery(
-        _extractColumnName(field), _extractColumnName(_getPkField()));
+  String _update(String columnName, String pkColumn) {
+    if (columnName == pkColumn)
+      return _template.updateQuery(pkColumn, pkColumn);
+    else
+      return _template.updateQuery(columnName, pkColumn);
   }
 
-  String _deleteObject(String pkValue) {
-    return _template.deleteQuery(_extractColumnName(_getPkField()));
+  String _deleteObject(String columnName) {
+    return _template.deleteQuery(columnName);
   }
 
   Field _getPkField() {
