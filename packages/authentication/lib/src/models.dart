@@ -48,12 +48,12 @@ class JWTConfig {
   final String jwtExpiryMinutes;
   final String jwtIss;
   final String jwtAud;
-  final String tokenType;
+  final String? tokenType;
 
   JWTConfig(
       {required this.jwtSecret,
       required this.jwtExpiryMinutes,
       required this.jwtIss,
       required this.jwtAud,
-      required this.tokenType});
+      this.tokenType});
 }

@@ -1,20 +1,10 @@
 import 'dart:convert';
+import 'package:postgres/postgres.dart';
+import 'package:db_annotations/db_annotations.dart' as db;
+part 'user.g.dart';
 
-import 'models.dart';
-
+@db.Table(tableName: 'users')
 class User {
-  // factory User.fromUsername(String username, String password, String salt) {
-  //   //TODO: When added to the database get base model's field
-  //   const id = '';
-
-  //   return User(
-  //       username: username,
-  //       hashedPassword: password,
-  //       salt: salt,
-  //       id: id,
-  //       createdAt: DateTime.now(),
-  //       updatedAt: DateTime.now());
-  // }
   User({
     required this.username,
     this.email,
@@ -29,18 +19,22 @@ class User {
       username: map['username'],
       email: map['email'],
       id: map['id'],
-      hashedPassword: map['hashedPassword'],
+      hashedPassword: map['hashed_password'],
       salt: map['salt'],
       account: map['account'],
     );
   }
 
   factory User.fromJson(String source) => User.fromMap(json.decode(source));
-
+  @db.PrimaryKey()
   final String username;
+  @db.DBColumn()
   final String? email;
+  @db.DBColumn()
   final String id;
+  @db.DBColumn(columnName: 'hashed_password')
   final String hashedPassword;
+  @db.DBColumn()
   final String salt;
   final String? account;
 
@@ -49,7 +43,6 @@ class User {
       'username': username,
       'email': email,
       'hashedPassword': hashedPassword,
-      'salt': salt,
       'account': account,
       'id': id
     };

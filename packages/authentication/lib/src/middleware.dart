@@ -14,6 +14,7 @@ class AuthMiddleware {
 
     final jwtToken = _extractJWTToken(request, jwtUtil.tokenType ?? 'Bearer');
     final claims = await jwtUtil.verifyJWTToken(jwtToken);
+
     if (claims != null) {
       request.setUser(UserTokenSubject.fromJson(claims.subject!));
       return null;

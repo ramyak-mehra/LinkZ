@@ -7,15 +7,12 @@ class UserRoute {
   UserRoute(this.app, this.authMiddleware);
   final Alfred app;
   final AuthMiddleware authMiddleware;
-  NestedRoute get router {
-    var userRouter =
-        NestedRoute(alfred: app, basePath: '/user/', baseMiddleware: [])
-          ..get('', details, middleware: [authMiddleware.middleware])
-          ..post('login', login)
-          ..post('logout', logout, middleware: [authMiddleware.middleware])
-          ..post('register', register)
-          ..all('*', (req, res) => '');
-
-    return userRouter;
+  void initialize() {
+    app.route('/user/')
+      ..get('', details, middleware: [authMiddleware.middleware])
+      ..post('login', login)
+      ..post('logout', logout, middleware: [authMiddleware.middleware])
+      ..post('register', register)
+      ..all('*', (req, res) => 'not found');
   }
 }

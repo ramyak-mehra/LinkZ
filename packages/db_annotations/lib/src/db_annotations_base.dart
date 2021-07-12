@@ -5,13 +5,13 @@ class Table {
 }
 
 abstract class Column {
-  final String? coulmnName;
+  final String? columnName;
   final String? postgresType;
-  const Column(this.coulmnName, this.postgresType);
+  const Column(this.columnName, this.postgresType);
 }
 
 class PrimaryKey extends Column {
-  const PrimaryKey({required String columnName, String? postgresType})
+  const PrimaryKey({String? columnName, String? postgresType})
       : super(columnName, postgresType);
 }
 

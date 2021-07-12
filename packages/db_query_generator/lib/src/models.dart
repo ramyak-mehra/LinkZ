@@ -70,7 +70,7 @@ class Field<T> {
 
   @override
   String toString() =>
-      'Field(type: $type, name: $name, \n annotatedClassInfo: $annotatedClassInfo)';
+      'Field(type: $type, name: $name, annotatedClassInfo: $annotatedClassInfo)';
 
   @override
   bool operator ==(Object other) {

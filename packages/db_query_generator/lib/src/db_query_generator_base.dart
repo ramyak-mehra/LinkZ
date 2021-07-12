@@ -55,6 +55,8 @@ class ChildrenVisitor extends SimpleElementVisitor {
       //Gets the constant value. It is used to find the values
       // inside the super constructor.
       final constantValue = meta.computeConstantValue();
+      if (field.name == 'hashedPassword') _log.severe(constantValue);
+      ;
 
       //Class by source gen package. Used to find the passed values inside the top
       // level constructor.
@@ -64,11 +66,12 @@ class ChildrenVisitor extends SimpleElementVisitor {
 
       //Setting the value for the ColumnName if exists else null.
       //If null field name will be used as column name.
-      if (annotation.peek('coulmnName') != null) {
-        field.annotatedClassInfo!.fields[Field<Type>(String, 'coulmnName')] =
-            annotation.peek('coulmnName')!.stringValue;
+      if (annotation.peek('columnName') != null) {
+        field.annotatedClassInfo!.fields[Field<Type>(String, 'columnName')] =
+            annotation.peek('columnName')!.stringValue;
+        _log.warning(annotation.peek('columnName')!.stringValue);
       } else {
-        field.annotatedClassInfo!.fields[Field<Type>(String, 'coulmnName')] =
+        field.annotatedClassInfo!.fields[Field<Type>(String, 'columnName')] =
             null;
       }
       //Setting the value for the postgresFieldType if exists else null.

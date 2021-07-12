@@ -92,10 +92,12 @@ class ModelQueryGenerator {
     for (var field in _usableFields) {
       var columnName = _extractColumnName(field);
       input = input + ' required ${field.type} $columnName,';
-      inputValues = inputValues + ' @' + columnName;
+      inputValues = inputValues + ' @' + columnName + ',';
       columnNames = columnNames + columnName + ' , ';
       substitutionValues = substitutionValues + "'$columnName' : $columnName ,";
     }
+    inputValues = inputValues.substring(0, inputValues.length - 1);
+
     buffer.writeln(
         'static Future<int> insert${className}(PostgreSQLExecutionContext execContext , {$input}) async {');
     buffer.writeln(
@@ -217,16 +219,21 @@ class ModelQueryGenerator {
   String _extractColumnName(Field field) {
     String columnName;
     if (field.annotatedClassInfo != null) {
-      if (field.annotatedClassInfo!.fields[Field(String, 'columnName')] !=
-          null) {
-        columnName = field
-            .annotatedClassInfo!.fields[Field(String, 'columnName')] as String;
-      } else
-        columnName = field.name;
-    } else {
-      columnName = field.name;
+      try {
+        //_log.severe(field.annotatedClassInfo!.fields.keys);
+
+        final key = field.annotatedClassInfo!.fields.keys
+            .where((element) => element.name == 'columnName');
+        //_log.severe(key.first);
+        columnName = field.annotatedClassInfo!.fields[key.first];
+        // _log.severe(columnName);
+
+        return columnName;
+      } catch (e) {
+        // _log.severe(e);
+      }
     }
-    return columnName;
+    return field.name;
   }
 }
 

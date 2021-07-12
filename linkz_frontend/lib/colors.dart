@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-const kGreenYellowCrayola = Color(0xFFF0F2A6);
+final kGreenYellowCrayola = Color(0xFFF0F2A6);
 const kRaisinBlack = Color(0xFF1A1B25);
-
+const kRoseDust = Color(0xFFAA6373);
 const kRussianViolet = Color(0xFF392061);
 
 // const Map<int, Color> primaryColorSwatch = {
@@ -55,5 +55,14 @@ ThemeData _buildLightTheme() {
   return base.copyWith(
       primaryColor: kRussianViolet,
       scaffoldBackgroundColor: kGreenYellowCrayola,
-      accentColor: kRaisinBlack);
+      accentColor: kRaisinBlack,
+      textSelectionTheme: TextSelectionThemeData(
+          cursorColor: kRussianViolet,
+          selectionColor: kGreenYellowCrayola,
+          selectionHandleColor: kRussianViolet),
+      cardColor: kGreenYellowCrayola,
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: kRussianViolet)),
+      ));
 }

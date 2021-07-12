@@ -6,9 +6,10 @@ class JWTUtil {
   final String? tokenType;
   late final JsonWebKey _jsonWebKey;
 
-  JWTUtil(this.jwtConfig, {this.tokenType})
+  JWTUtil(this.jwtConfig)
       : _jsonWebKey =
-            JsonWebKey.fromJson({'kty': 'oct', 'k': jwtConfig.jwtSecret});
+            JsonWebKey.fromJson({'kty': 'oct', 'k': jwtConfig.jwtSecret}),
+        tokenType = jwtConfig.tokenType;
 
   String generateJWTToken(
       {required UserTokenSubject userData, Duration? jwtExpiery}) {

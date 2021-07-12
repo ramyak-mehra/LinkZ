@@ -2,11 +2,20 @@ import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:authentication/authentication.dart';
+import 'package:linkz/env/env.dart';
 import 'package:linkz/models/models.dart';
 import 'package:logger/logger.dart';
+import 'package:postgres/postgres.dart';
 import 'package:uuid/uuid.dart';
 
-var _logger = Logger(
+Future<PostgreSQLConnection> connect() async {
+  var conntection = PostgreSQLConnection('localhost', 5432, 'db_testing',
+      username: 'postgres', password: 'password');
+  await conntection.open();
+  return conntection;
+}
+
+var _log = Logger(
   printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 8,
@@ -21,11 +30,14 @@ Future details(HttpRequest request, HttpResponse response) async {
 }
 
 Future login(HttpRequest request, HttpResponse response) async {
-  //TODO: Pass the jwtutil inside the app.
-  final jwtUtil = JWTUtil();
+  final jwtUtil = JWTUtil(JWTConfig(
+      jwtSecret: EnvConfig.jwtSecret,
+      jwtExpiryMinutes: EnvConfig.jwtExpiryMinutes,
+      jwtIss: EnvConfig.jwtIss,
+      jwtAud: EnvConfig.jwtAud));
   final body = await request.bodyAsJsonMap;
   try {
-    final user = _validateLoginRequest(body);
+    final user = await _validateLoginRequest(body);
     final accessToken = jwtUtil.generateJWTToken(
         userData: UserTokenSubject(userId: user.id, username: user.username));
     return {'accessToken': accessToken};
@@ -44,6 +56,16 @@ Future register(HttpRequest request, HttpResponse response) async {
   final body = await request.bodyAsJsonMap;
   try {
     final user = _validateRegisterRequest(body);
+    _log.d(user);
+    var connection = await connect();
+    await connection.transaction((ctx) async {
+      await $User.insertUser(ctx,
+          email: user.email,
+          hashed_password: user.hashedPassword,
+          id: user.id,
+          salt: user.salt,
+          username: user.username);
+    });
     return user.toJson();
   } catch (e) {
     throw AlfredException(HttpStatus.badRequest, e.toString());
@@ -77,7 +99,7 @@ User _validateRegisterRequest(Map<String, dynamic> body) {
       salt: salt);
 }
 
-User _validateLoginRequest(Map<String, dynamic> body) {
+Future<User> _validateLoginRequest(Map<String, dynamic> body) async {
   var password = body['password'] as String?;
   if (password == null) {
     throw AlfredException(HttpStatus.badRequest, 'Password field is required.');
@@ -90,9 +112,11 @@ User _validateLoginRequest(Map<String, dynamic> body) {
     throw AlfredException(
         HttpStatus.badRequest, 'Username or Email field is required.');
   }
-
-  //TODO:Fetch object from db
-  final dbUser = User.fromJson('source');
+  var connection = await connect();
+  late User dbUser;
+  await connection.transaction((ctx) async {
+    dbUser = await $User.getUserByPk(ctx, username: username);
+  });
   final validatePassword =
       password.validatePassword(dbUser.salt, dbUser.hashedPassword);
   if (!validatePassword) {
