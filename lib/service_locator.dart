@@ -10,10 +10,18 @@ void setupDL() {
       jwtAud: EnvConfig.jwtAud))));
 
   // ignore: cascade_invocations
-  getIt.registerSingleton<PgPool>(PgPool(PgEndpoint(
-      host: 'localhost',
-      port: 5432,
-      database: 'db_testing',
-      password: 'password',
-      username: 'postgres')));
+  getIt.registerSingleton<PgPool>(
+    PgPool(
+      PgEndpoint(
+          host: 'localhost',
+          port: 5432,
+          database: 'db_testing',
+          password: 'password',
+          username: 'postgres'),
+    ),
+  );
+
+  // ignore: cascade_invocations
+  getIt.registerLazySingleton<AuthMiddleware>(
+      () => AuthMiddleware(getIt<JWTUtil>()));
 }

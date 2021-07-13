@@ -1,10 +1,7 @@
-import 'package:linkz/controller/user.dart';
-
-import 'package:alfred/alfred.dart';
-import 'package:authentication/authentication.dart';
+import 'package:linkz/linkz.dart';
 
 class UserRoute {
-  UserRoute(this.app, this.authMiddleware);
+  UserRoute(this.app) : authMiddleware = getIt<AuthMiddleware>();
   final Alfred app;
   final AuthMiddleware authMiddleware;
   void initialize() {

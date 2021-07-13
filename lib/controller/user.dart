@@ -19,7 +19,7 @@ Future login(HttpRequest request, HttpResponse response) async {
     final accessToken = jwtUtil.generateJWTToken(
         userData: UserTokenSubject(userId: user.id, username: user.username));
     return {'accessToken': accessToken};
-  } catch (e) {
+  } on PostgreSQLException catch (e) {
     throw AlfredException(HttpStatus.badRequest, e.toString());
   }
 }
@@ -45,7 +45,7 @@ Future register(HttpRequest request, HttpResponse response) async {
     });
 
     return user.toJson();
-  } catch (e) {
+  } on PostgreSQLException catch (e) {
     throw AlfredException(HttpStatus.badRequest, e.toString());
   }
 }
@@ -85,13 +85,12 @@ Future<User> _validateLoginRequest(Map<String, dynamic> body) async {
   var email = body['email'] as String?;
 
   var username = body['username'];
-  if (username == null || email == null) {
-    username = username as String?;
+  if (username == null && email == null) {
     throw AlfredException(
         HttpStatus.badRequest, 'Username or Email field is required.');
   }
   var pgPool = getIt<PgPool>();
-  final dbUser = await $User.getUserByPk(pgPool, username: username);
+  final dbUser = await $User.getUserByPk(pgPool, username: username as String);
   final validatePassword =
       password.validatePassword(dbUser.salt, dbUser.hashedPassword);
   if (!validatePassword) {

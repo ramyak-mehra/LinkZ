@@ -1,33 +1,39 @@
-import 'models.dart';
+import 'package:db_annotations/db_annotations.dart' as db;
+import 'package:postgres/postgres.dart';
+part 'link.g.dart';
 
-class Link {
-  Link({
-    required Account account,
-    required String title,
-    required String url,
-    required int index,
-    String? emoji,
-  })  : _account = account,
-        _title = title,
-        _url = url,
-        _index = index,
-        _emoji = emoji,
-        _clicks = 0,
-        _turnedOn = false;
-  final Account _account;
-  final String _title;
-  final String _url;
-  final int _index;
-  final bool _turnedOn;
-  final String? _emoji;
-  final int _clicks;
-//TODO: Make getters to do the database transaction
+@db.Table(tableName: 'links')
+class Linkz {
+  factory Linkz.fromMap(Map<String, dynamic> map) {
+    return Linkz(
+      index: map['index'],
+      title: map['title'],
+      url: map['url'],
+      account: map['account'],
+      emoji: map['emoji'],
+    );
+  }
+  Linkz({
+    required this.account,
+    required this.title,
+    required this.url,
+    required this.index,
+    this.emoji,
+  })  : clicks = 0,
+        turnedOn = false;
 
-  Account get account => _account;
-  String get title => _title;
-  String get url => _url;
-  int get index => _index;
-  bool get turnedOn => _turnedOn;
-  int get clicks => _clicks;
-  String? get emoji => _emoji;
+  @db.DBColumn(columnName: 'account')
+  final String account;
+  @db.DBColumn(columnName: 'title')
+  final String title;
+  @db.PrimaryKey(columnName: 'url')
+  final String url;
+  @db.DBColumn(columnName: 'index')
+  final int index;
+  @db.DBColumn(columnName: 'turnedOn')
+  final bool turnedOn;
+  @db.DBColumn(columnName: 'emoji')
+  final String? emoji;
+  @db.DBColumn(columnName: 'clicks')
+  final int clicks;
 }

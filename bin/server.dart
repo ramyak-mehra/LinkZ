@@ -15,13 +15,9 @@ void main(List<String> args) async {
     exitCode = 64;
     return;
   }
-  final jwtUtil = JWTUtil(JWTConfig(
-      jwtSecret: EnvConfig.jwtSecret,
-      jwtExpiryMinutes: EnvConfig.jwtExpiryMinutes,
-      jwtIss: EnvConfig.jwtIss,
-      jwtAud: EnvConfig.jwtAud));
+
   var app = Alfred(logLevel: LogType.debug);
-  final userRouter = UserRoute(app, AuthMiddleware(jwtUtil))..initialize();
+  UserRoute(app).initialize();
 
   app.printRoutes();
 
