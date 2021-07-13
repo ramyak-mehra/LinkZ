@@ -2,39 +2,17 @@ import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:authentication/authentication.dart';
-import 'package:linkz/env/env.dart';
+import 'package:linkz/linkz.dart';
 import 'package:linkz/models/models.dart';
-import 'package:logger/logger.dart';
-import 'package:postgres/postgres.dart';
+import 'package:linkz/service_locator.dart';
 import 'package:uuid/uuid.dart';
-
-Future<PostgreSQLConnection> connect() async {
-  var conntection = PostgreSQLConnection('localhost', 5432, 'db_testing',
-      username: 'postgres', password: 'password');
-  await conntection.open();
-  return conntection;
-}
-
-var _log = Logger(
-  printer: PrettyPrinter(
-      methodCount: 2,
-      errorMethodCount: 8,
-      lineLength: 120,
-      colors: true,
-      printEmojis: true,
-      printTime: true),
-);
 
 Future details(HttpRequest request, HttpResponse response) async {
   return request.getUser;
 }
 
 Future login(HttpRequest request, HttpResponse response) async {
-  final jwtUtil = JWTUtil(JWTConfig(
-      jwtSecret: EnvConfig.jwtSecret,
-      jwtExpiryMinutes: EnvConfig.jwtExpiryMinutes,
-      jwtIss: EnvConfig.jwtIss,
-      jwtAud: EnvConfig.jwtAud));
+  final jwtUtil = getIt<JWTUtil>();
   final body = await request.bodyAsJsonMap;
   try {
     final user = await _validateLoginRequest(body);
@@ -56,9 +34,8 @@ Future register(HttpRequest request, HttpResponse response) async {
   final body = await request.bodyAsJsonMap;
   try {
     final user = _validateRegisterRequest(body);
-    _log.d(user);
-    var connection = await connect();
-    await connection.transaction((ctx) async {
+    var pgPool = getIt<PgPool>();
+    await pgPool.runTx((ctx) async {
       await $User.insertUser(ctx,
           email: user.email,
           hashed_password: user.hashedPassword,
@@ -66,6 +43,7 @@ Future register(HttpRequest request, HttpResponse response) async {
           salt: user.salt,
           username: user.username);
     });
+
     return user.toJson();
   } catch (e) {
     throw AlfredException(HttpStatus.badRequest, e.toString());
@@ -88,7 +66,6 @@ User _validateRegisterRequest(Map<String, dynamic> body) {
     username = username as String?;
     throw AlfredException(HttpStatus.badRequest, 'Username field is required.');
   }
-  //TODO: Check if the user already exsists.
   final salt = generateSalt();
   const uuid = Uuid();
   return User(
@@ -99,6 +76,7 @@ User _validateRegisterRequest(Map<String, dynamic> body) {
       salt: salt);
 }
 
+//Check if the user credentials are valid from a database.
 Future<User> _validateLoginRequest(Map<String, dynamic> body) async {
   var password = body['password'] as String?;
   if (password == null) {
@@ -112,11 +90,8 @@ Future<User> _validateLoginRequest(Map<String, dynamic> body) async {
     throw AlfredException(
         HttpStatus.badRequest, 'Username or Email field is required.');
   }
-  var connection = await connect();
-  late User dbUser;
-  await connection.transaction((ctx) async {
-    dbUser = await $User.getUserByPk(ctx, username: username);
-  });
+  var pgPool = getIt<PgPool>();
+  final dbUser = await $User.getUserByPk(pgPool, username: username);
   final validatePassword =
       password.validatePassword(dbUser.salt, dbUser.hashedPassword);
   if (!validatePassword) {

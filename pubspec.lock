@@ -232,6 +232,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  executor:
+    dependency: transitive
+    description:
+      name: executor
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.2"
   file:
     dependency: transitive
     description:
@@ -253,6 +260,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.2.0"
   glob:
     dependency: transitive
     description:
@@ -407,6 +421,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.2"
+  postgres_pool:
+    dependency: "direct main"
+    description:
+      name: postgres_pool
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.2"
   pub_semver:
     dependency: transitive
     description:
@@ -435,6 +456,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  retry:
+    dependency: transitive
+    description:
+      name: retry
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
   shelf:
     dependency: "direct main"
     description:

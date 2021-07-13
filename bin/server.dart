@@ -1,14 +1,7 @@
-import 'dart:io';
-import 'package:alfred/alfred.dart';
-import 'package:args/args.dart';
-import 'package:authentication/authentication.dart';
-import 'package:linkz/env/env.dart';
-import 'package:linkz/routes/user.dart';
-
-// For Google Cloud Run, set _hostname to '0.0.0.0'.
-const _hostname = 'localhost';
+import 'package:linkz/linkz.dart';
 
 void main(List<String> args) async {
+  setupDL();
   var parser = ArgParser()..addOption('port', abbr: 'p');
   var result = parser.parse(args);
 
