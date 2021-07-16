@@ -9,22 +9,24 @@ part of 'link.dart';
 class $Linkz {
   static Future<int> insertLinkz(
     PostgreSQLExecutionContext execContext, {
+    required String id,
     required String account,
     required String title,
     required String url,
     required int index,
-    required bool turnedOn,
+    required bool turned_on,
     required String? emoji,
     required int clicks,
   }) async {
     final result = await execContext.execute(
-        'INSERT INTO links(account , title , url , index , turnedOn , emoji , clicks , ) VALUES( @account, @title, @url, @index, @turnedOn, @emoji, @clicks)',
+        'INSERT INTO links(id , account , title , url , index , turned_on , emoji , clicks  ) VALUES( @id, @account, @title, @url, @index, @turned_on, @emoji, @clicks)',
         substitutionValues: {
+          'id': id,
           'account': account,
           'title': title,
           'url': url,
           'index': index,
-          'turnedOn': turnedOn,
+          'turned_on': turned_on,
           'emoji': emoji,
           'clicks': clicks,
         });
@@ -33,10 +35,10 @@ class $Linkz {
   }
 
   static Future<Linkz> getLinkzByPk(PostgreSQLExecutionContext execContext,
-      {required String url}) async {
+      {required String id}) async {
     final result = await execContext.mappedResultsQuery(
-        'SELECT * FROM links WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'SELECT * FROM links WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result.length == 1);
     final map = result.first['links'];
     return Linkz.fromMap(map!);
@@ -81,6 +83,20 @@ class $Linkz {
     return linkzs;
   }
 
+  static Future<List<Linkz>> getLinkzByUrl(
+      PostgreSQLExecutionContext execContext,
+      {required String url}) async {
+    final linkzs = <Linkz>[];
+    final result = await execContext.mappedResultsQuery(
+        'SELECT * FROM links WHERE url = @url;',
+        substitutionValues: {'url': url});
+    for (var linkz in result) {
+      final map = linkz['links'];
+      linkzs.add(Linkz.fromMap(map!));
+    }
+    return linkzs;
+  }
+
   static Future<List<Linkz>> getLinkzByIndex(
       PostgreSQLExecutionContext execContext,
       {required int index}) async {
@@ -95,13 +111,13 @@ class $Linkz {
     return linkzs;
   }
 
-  static Future<List<Linkz>> getLinkzByTurnedon(
+  static Future<List<Linkz>> getLinkzByTurned_on(
       PostgreSQLExecutionContext execContext,
-      {required bool turnedOn}) async {
+      {required bool turned_on}) async {
     final linkzs = <Linkz>[];
     final result = await execContext.mappedResultsQuery(
-        'SELECT * FROM links WHERE turnedOn = @turnedOn;',
-        substitutionValues: {'turnedOn': turnedOn});
+        'SELECT * FROM links WHERE turned_on = @turned_on;',
+        substitutionValues: {'turned_on': turned_on});
     for (var linkz in result) {
       final map = linkz['links'];
       linkzs.add(Linkz.fromMap(map!));
@@ -137,74 +153,85 @@ class $Linkz {
     return linkzs;
   }
 
-  static Future<int> updateLinkzAccount(PostgreSQLExecutionContext execContext,
-      {required String account, required String url}) async {
+  static Future<int> updateLinkzId(PostgreSQLExecutionContext execContext,
+      {required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET account = @account WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET id = @id WHERE id = @id;',
+        substitutionValues: {'id': id, 'id': id});
+    assert(result == 1);
+    return result;
+  }
+
+  static Future<int> updateLinkzAccount(PostgreSQLExecutionContext execContext,
+      {required String account, required String id}) async {
+    final result = await execContext.execute(
+        'UPDATE links SET account = @account WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> updateLinkzTitle(PostgreSQLExecutionContext execContext,
-      {required String title, required String url}) async {
+      {required String title, required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET title = @title WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET title = @title WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> updateLinkzUrl(PostgreSQLExecutionContext execContext,
-      {required String url}) async {
+      {required String url, required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET url = @url WHERE url = @url;',
-        substitutionValues: {'url': url, 'url': url});
+        'UPDATE links SET url = @url WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> updateLinkzIndex(PostgreSQLExecutionContext execContext,
-      {required int index, required String url}) async {
+      {required int index, required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET index = @index WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET index = @index WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
-  static Future<int> updateLinkzTurnedon(PostgreSQLExecutionContext execContext,
-      {required bool turnedOn, required String url}) async {
+  static Future<int> updateLinkzTurned_on(
+      PostgreSQLExecutionContext execContext,
+      {required bool turned_on,
+      required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET turnedOn = @turnedOn WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET turned_on = @turned_on WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> updateLinkzEmoji(PostgreSQLExecutionContext execContext,
-      {required String? emoji, required String url}) async {
+      {required String? emoji, required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET emoji = @emoji WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET emoji = @emoji WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> updateLinkzClicks(PostgreSQLExecutionContext execContext,
-      {required int clicks, required String url}) async {
+      {required int clicks, required String id}) async {
     final result = await execContext.execute(
-        'UPDATE links SET clicks = @clicks WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'UPDATE links SET clicks = @clicks WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }
 
   static Future<int> deleteLinkzByPk(PostgreSQLExecutionContext execContext,
-      {required String url}) async {
+      {required String id}) async {
     final result = await execContext.execute(
-        'DELETE FROM links WHERE url = @url;',
-        substitutionValues: {'url': url});
+        'DELETE FROM links WHERE id = @id;',
+        substitutionValues: {'id': id});
     assert(result == 1);
     return result;
   }

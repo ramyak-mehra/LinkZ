@@ -1,4 +1,5 @@
 import 'package:linkz/linkz.dart';
+import 'package:linkz/routes/link_route.dart';
 
 void main(List<String> args) async {
   setupDL();
@@ -18,6 +19,7 @@ void main(List<String> args) async {
 
   var app = Alfred(logLevel: LogType.debug);
   UserRoute(app).initialize();
+  LinkRouter(app).initialise();
 
   app.printRoutes();
 

@@ -1,4 +1,5 @@
 import 'package:linkz/linkz.dart';
+import 'package:uuid/uuid.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,6 +22,8 @@ void setupDL() {
     ),
   );
 
+  // ignore: cascade_invocations
+  getIt.registerSingleton<Uuid>(const Uuid());
   // ignore: cascade_invocations
   getIt.registerLazySingleton<AuthMiddleware>(
       () => AuthMiddleware(getIt<JWTUtil>()));

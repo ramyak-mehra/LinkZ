@@ -67,7 +67,7 @@ User _validateRegisterRequest(Map<String, dynamic> body) {
     throw AlfredException(HttpStatus.badRequest, 'Username field is required.');
   }
   final salt = generateSalt();
-  const uuid = Uuid();
+  final uuid = getIt<Uuid>();
   return User(
       id: uuid.v4(),
       username: username,
