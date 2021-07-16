@@ -19,7 +19,7 @@ class $Linkz {
     required int clicks,
   }) async {
     final result = await execContext.execute(
-        'INSERT INTO links(id , account , title , url , index , turned_on , emoji , clicks  ) VALUES( @id, @account, @title, @url, @index, @turned_on, @emoji, @clicks)',
+        'INSERT INTO links(id , account , title , url , index , turned_on , emoji , clicks , ) VALUES( @id, @account, @title, @url, @index, @turned_on, @emoji, @clicks)',
         substitutionValues: {
           'id': id,
           'account': account,

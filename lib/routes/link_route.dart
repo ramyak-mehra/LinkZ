@@ -8,6 +8,7 @@ class LinkRouter {
 
   void initialise() {
     app.route('/link/', middleware: [authMiddleware.middleware])
+      ..get('', getAllLinks)
       ..post('create', addLink)
       ..all('*', (req, res) => 'not found');
   }

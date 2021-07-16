@@ -1,31 +1,18 @@
-import 'package:linkz/models/design.dart';
-import 'package:linkz/models/images.dart';
-import 'package:linkz/models/socials.dart';
+import 'package:linkz/linkz.dart';
+import 'package:db_annotations/db_annotations.dart' as db;
+import 'package:uuid/uuid.dart';
 
-import 'models.dart';
+part 'account.g.dart';
 
+@db.Table(tableName: 'account')
 class Account {
-  Account({
-    required Design currentDesign,
-  }) : _currentDesign = currentDesign;
-
-//TODO: Create factory constructors for adding socials.
-
-  List<Linkz>? _links;
-  final Design _currentDesign;
-  late ImageField _qrCode;
-  late Socials _socials;
-  Design get currentDesign => _currentDesign;
-  List<Linkz>? get links => _links;
-  ImageField get qrCode => _qrCode;
-  Socials get socials => _socials;
-
-  void addLink(List<Linkz> links) {
-    if (_links != null) {
-      _links!.addAll(links);
-    } else {
-      _links = [];
-      _links!.addAll(links);
-    }
+  Account({required this.id, required this.user});
+  factory Account.fromMap(Map<String, dynamic> map) {
+    return Account(id: map['id'], user: map['user']);
   }
+
+  @db.PrimaryKey()
+  final String id;
+  @db.DBColumn()
+  final String user;
 }

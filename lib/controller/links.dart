@@ -31,6 +31,37 @@ Future addLink(HttpRequest request, HttpResponse response) async {
   }
 }
 
+Future getAllLinks(HttpRequest request, HttpResponse response) async {
+  final accountId = request.uri.queryParameters['account'];
+  final user = request.getUser;
+  if (accountId != null) {
+    final pgPool = getIt<PgPool>();
+    final result = await _verifyAccount(accountId, user!.userId);
+    if (!result) {
+      throw AlfredException(
+          HttpStatus.forbidden, 'Account doesn\'t belongs to you.');
+    }
+    final links = await $Linkz.getLinkzByAccount(pgPool, account: accountId);
+    return links;
+  } else {
+    throw BadFieldLinkException('Account');
+  }
+}
+
+Future<bool> _verifyAccount(String accountId, String userid) async {
+  try {
+    final pgPool = getIt<PgPool>();
+    final account = await $Account.getAccountByPk(pgPool, id: accountId);
+    if (account.user == userid) {
+      return true;
+    } else {
+      return false;
+    }
+  } on PostgreSQLException catch (e) {
+    throw AlfredException(HttpStatus.forbidden, e.toString());
+  }
+}
+
 Linkz _validateRequest(Map<String, dynamic> body) {
   var title = body['title'];
   if (title == null) {
@@ -62,5 +93,5 @@ Linkz _validateRequest(Map<String, dynamic> body) {
 
 class BadFieldLinkException extends AlfredException {
   BadFieldLinkException(String field)
-      : super(HttpStatus.badRequest, '$field is required');
+      : super(HttpStatus.unprocessableEntity, '$field is required');
 }
