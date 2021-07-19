@@ -17,3 +17,15 @@ Account _validateInput(Map<String, dynamic> body, HttpRequest request) {
 
   return Account(id: uuid.v4(), user: request.getUser!.userId);
 }
+
+Future accountDetails(HttpRequest request, HttpResponse response) async {
+  final userId = request.getUser!.userId;
+
+  try {
+    final account =
+        await $Account.getAccountByUser(getIt<PgPool>(), user: userId);
+    return account.first.toJson();
+  } on PostgreSQLException catch (e) {
+    return AlfredException(HttpStatus.badRequest, e.toString());
+  }
+}
