@@ -7,9 +7,10 @@ export 'package:get_it/get_it.dart';
 export 'package:linkz/controller/user.dart';
 export 'package:linkz/env/env_config.dart';
 export 'package:linkz/models/models.dart';
-export 'package:linkz/routes/user.dart';
+export 'package:linkz/routes/user_route.dart';
 export 'package:postgres/postgres.dart';
 export 'package:postgres_pool/postgres_pool.dart';
 export 'package:postgres_pool/postgres_pool.dart';
+export 'package:uuid/uuid.dart';
 
 export 'service_locator.dart';

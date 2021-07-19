@@ -1,6 +1,5 @@
 import 'package:linkz/linkz.dart';
 import 'package:db_annotations/db_annotations.dart' as db;
-import 'package:uuid/uuid.dart';
 
 part 'account.g.dart';
 
@@ -10,6 +9,12 @@ class Account {
   factory Account.fromMap(Map<String, dynamic> map) {
     return Account(id: map['id'], user: map['user']);
   }
+
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'user': user};
+  }
+
+  String toJson() => json.encode(toMap());
 
   @db.PrimaryKey()
   final String id;
