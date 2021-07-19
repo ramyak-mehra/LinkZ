@@ -7,8 +7,9 @@ class AccountRoute {
   final AuthMiddleware authMiddleware;
   void initialize() {
     app.route('/account/', middleware: [authMiddleware.middleware])
-      ..get('', details)
+      ..get('', accountDetails)
       ..post('create', createAccount)
+      ..delete('delete', deleteAccount)
       ..all('*', (req, res) => 'not found');
   }
 }

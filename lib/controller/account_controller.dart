@@ -29,3 +29,21 @@ Future accountDetails(HttpRequest request, HttpResponse response) async {
     return AlfredException(HttpStatus.badRequest, e.toString());
   }
 }
+
+Future deleteAccount(HttpRequest request, HttpResponse response) async {
+  final userId = request.getUser!.userId;
+  final pgPool = getIt<PgPool>();
+  try {
+    await pgPool.runTx((c) async {
+      final account = await $Account.getAccountByUser(c, user: userId);
+      final result = await $Account.deleteAccountByPk(c, id: account.first.id);
+      if (result != 1) {
+        c.cancelTransaction(
+            reason: 'Multiple accounts exsist for the same user.');
+      }
+    });
+  } on PostgreSQLException catch (e) {
+    return AlfredException(HttpStatus.badRequest, e.toString());
+  }
+  return {'response': 'success'};
+}
