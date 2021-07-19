@@ -93,10 +93,11 @@ class ModelQueryGenerator {
       var columnName = _extractColumnName(field);
       input = input + ' required ${field.type} $columnName,';
       inputValues = inputValues + ' @' + columnName + ',';
-      columnNames = columnNames + columnName + ' , ';
+      columnNames = columnNames + columnName + ',';
       substitutionValues = substitutionValues + "'$columnName' : $columnName ,";
     }
     inputValues = inputValues.substring(0, inputValues.length - 1);
+    columnNames = columnNames.substring(0, columnNames.length - 1);
 
     buffer.writeln(
         'static Future<int> insert${className}(PostgreSQLExecutionContext execContext , {$input}) async {');
