@@ -1,4 +1,4 @@
-import 'package:linkz/controller/links.dart';
+import 'package:linkz/controller/links_controller.dart';
 import 'package:linkz/linkz.dart';
 
 class LinkRouter {
@@ -10,6 +10,7 @@ class LinkRouter {
     app.route('/link/', middleware: [authMiddleware.middleware])
       ..get('', getAllLinks)
       ..post('create', addLink)
+      ..delete('delete', deleteLink)
       ..all('*', (req, res) => 'not found');
   }
 }

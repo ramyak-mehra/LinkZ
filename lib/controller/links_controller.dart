@@ -1,7 +1,4 @@
 import 'package:linkz/linkz.dart';
-import 'package:logger/logger.dart';
-
-final _log = Logger();
 
 Future addLink(HttpRequest request, HttpResponse response) async {
   final body = await request.bodyAsJsonList;
@@ -46,6 +43,32 @@ Future getAllLinks(HttpRequest request, HttpResponse response) async {
   } else {
     throw BadFieldLinkException('Account');
   }
+}
+
+Future deleteLink(HttpRequest request, HttpResponse response) async {
+  final body = await request.bodyAsJsonMap;
+  final linkId = body['id'];
+  try {
+    await _authorizeAndDelete(linkId, request.getUser!.userId);
+  } on PostgreSQLException catch (e) {
+    throw AlfredException(HttpStatus.badRequest, e.toString());
+  } catch (e) {
+    throw AlfredException(HttpStatus.internalServerError, e.toString());
+  }
+  return {'response': 'success'};
+}
+
+Future<void> _authorizeAndDelete(String linkId, String userId) async {
+  final pgPool = getIt<PgPool>();
+  await pgPool.runTx((ctx) async {
+    final account = await $Account.getAccountByUser(ctx, user: userId);
+    final link = await $Linkz.getLinkzByPk(ctx, id: linkId);
+    if (link.account != account.first.id) {
+      ctx.cancelTransaction(
+          reason: 'You are not authorized to perform this action.');
+    }
+    await $Linkz.deleteLinkzByPk(ctx, id: linkId);
+  });
 }
 
 Future<bool> _verifyAccount(String accountId, String userid) async {
