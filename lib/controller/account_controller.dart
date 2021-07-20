@@ -31,16 +31,18 @@ Future accountDetails(HttpRequest request, HttpResponse response) async {
 }
 
 Future deleteAccount(HttpRequest request, HttpResponse response) async {
+  final body = await request.bodyAsJsonMap;
+  final accountId = body['account'];
   final userId = request.getUser!.userId;
   final pgPool = getIt<PgPool>();
   try {
     await pgPool.runTx((c) async {
-      final account = await $Account.getAccountByUser(c, user: userId);
-      final result = await $Account.deleteAccountByPk(c, id: account.first.id);
-      if (result != 1) {
+      final account = await $Account.getAccountByPk(c, id: accountId);
+      if (account.user != userId) {
         c.cancelTransaction(
-            reason: 'Multiple accounts exsist for the same user.');
+            reason: 'You are not authorized to perform this action.');
       }
+      await $Account.deleteAccountByPk(c, id: accountId);
     });
   } on PostgreSQLException catch (e) {
     return AlfredException(HttpStatus.badRequest, e.toString());
